@@ -8,12 +8,6 @@ The backend query is designed to show only "released" products, but by manipulat
 - **Vulnerability Type**: SQL Injection
 - **Impact**: Disclosure of unreleased products and full inventory.
 
-This lab contains a SQL injection vulnerability in the product category filter. When the user selects a category, the application carries out a SQL query like the following:
-
-```sql
-SELECT * FROM products WHERE category = 'Gifts' AND released = 1
-```
-
 ---
 
 ### 🎯 Objectives
@@ -41,11 +35,6 @@ SELECT * FROM products WHERE category = 'Gifts' AND released = 1
    ```
    Since `1=1` is always true, the database returns every record in the `products` table, effectively ignoring the category filter and the release restriction.
 
-- `filter?category=Gifts` shows three gifts
-- `filter?category=Gifts'` (Single quote) results in 500 error response code.
-- `filter?category=Gifts'--` shows four items
-- `filter?category=Gifts' OR 1=1--` shows all products
-
 ---
 
 ### 🛠️ Exploit Implementation
@@ -63,7 +52,7 @@ The automation script (`lab-01.py`) performs the following logic:
 The application must use a database driver that supports parameterized queries.
 This ensures the database treats the input `' OR 1=1--` as a literal string value for the category name rather than part of the SQL command.
 
-**Example (Python/psycopg2)**:
+_Example (Python/psycopg2)_:
 
 ```python
 # SECURE: Input is passed as a separate parameter
