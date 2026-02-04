@@ -34,6 +34,7 @@ This repository contains my automated solutions and technical write-ups for the 
 | #   | Category          | Lab Name                                                                        | Difficulty   | Solution                                      | Writeup                                      |
 | :-- | :---------------- | :------------------------------------------------------------------------------ | :----------- | --------------------------------------------- | -------------------------------------------- |
 | 1   | **SQL Injection** | SQL injection vulnerability in `WHERE` clause allowing retrieval of hidden data | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-01/lab-01.py) | [📝 Notes](./sql-injection/lab-01/lab-01.md) |
+| 2   | **SQL Injection** | SQL injection vulnerability allowing login bypass                               | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-02/lab-02.py) | [📝 Notes](./sql-injection/lab-02/lab-02.md) |
 |     |                   |                                                                                 |              |                                               |                                              |
 |     |                   |                                                                                 |              |                                               |                                              |
 
