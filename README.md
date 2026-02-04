@@ -9,7 +9,7 @@ This repository contains my automated solutions and technical write-ups for the 
 1. **Clone the Repository**:
 
    ```bash
-   git clone [https://github.com/Asif-Iqbal-Gazi/web-security-academy-solutions.git](https://github.com/Asif-Iqbal-Gazi/web-security-academy-solutions.git)
+   git clone https://github.com/Asif-Iqbal-Gazi/web-security-academy-solutions.git
    cd web-security-academy-solutions
    ```
 
@@ -25,11 +25,17 @@ This repository contains my automated solutions and technical write-ups for the 
    python3 sql-injection/lab-05/lab-05.py <LAB_URL>
    ```
 
-   [!Note] The scirpts are currently configured to use `verify=False`. Ensure your local proxy (e.g., Burp Suite) is listening on `127.0.0.1:8080`.
+   [!Note] The scripts are currently configured to use `verify=False`. Ensure your local proxy (e.g., Burp Suite) is listening on `127.0.0.1:8080`.
 
 ---
 
 ## ✅ Progress Dashboard
+
+| #   | Category      | Lab Name                                                                      | Difficulty | Solution                                      | Writeup                                       |
+| :-- | :------------ | :---------------------------------------------------------------------------- | :--------- | --------------------------------------------- | --------------------------------------------- |
+| 1   | SQL Injection | SQL injection vulnerability in WHERE clause allowing retrieval of hidden data | APPRENTICE | [lab-01.py](./sql-injection/lab-01/lab-01.py) | [lab-01.md](./sql-injection/lab-01/lab-01.md) |
+|     |               |                                                                               |            |                                               |                                               |
+|     |               |                                                                               |            |                                               |                                               |
 
 ---
 
