@@ -35,7 +35,7 @@ SELECT * FROM products WHERE category = 'Gifts' AND released = 1
 1. **Breaking the Syntax**: `Gifts'` caused a `500 Internal Server Error`, confirming the input is not being sanitized and is breaking the SQL string literal.
 2. **Commenting**: `Gifts'--` returned more items than standard "**Gifts**" category.
    This confirms that `--` successfully commented out the `AND released = 1` portion of the query.
-3. **Tautology Payload**: `'OR 1=1--` creates the follwing logic:
+3. **Tautology Payload**: `'OR 1=1--` creates the following logic:
    ```sql
    SELECT * FROM products WHERE category = 'Gifts' OR 1=1--' AND released = 1
    ```
