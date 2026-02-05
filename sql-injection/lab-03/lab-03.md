@@ -27,7 +27,8 @@ SELECT * FROM products WHERE category = 'Gifts' AND released = 1
 2. **Technique A (`ORDER BY`)**: By appending `ORDER BY X`, we instruct the database to sort the results by the specific index `X`. If we sort by a column that exceeds the actual count, the database throws an error ( resulting `500` response).
 
   > [!NOTE] 
-   > **Binary Search Logic**: For a 5-column table, `ORDER BY i`, will return a `200 OK` for $i \in [1,5]$ and `500` error for $i > 5$. This creates a boolean array pattern: `TTTTTFFFFF...` We can leverage this pattern to implement a **Binary Search** algorithm to find the column count efficiently.
+   > **Binary Search Logic**: For a 5-column table, `ORDER BY i`, will return a `200 OK` for $i \in [1,5]$ and `500` error for $i > 5$. 
+   > This creates a boolean array pattern: `TTTTTFFFFF...` We can leverage this pattern to implement a **Binary Search** algorithm to find the column count efficiently.
 
 3. **Technique B** (`UNION SELECT NULL`): By appending `UNION SELECT NULL`, we attempt to join a second query. Since `NULL` is compatible with most data types, we increment the number of `NULL` values until the query succeeds.
 

@@ -26,7 +26,8 @@ This repository contains my automated solutions and technical write-ups for the 
    ```
 
 >[!NOTE] 
-   >The scripts are currently configured to use `verify=False`. Ensure your local proxy (e.g., Burp Suite) is listening on `127.0.0.1:8080`.
+   >The scripts are currently configured to use `verify=False`. 
+   >Ensure your local proxy (e.g., Burp Suite) is listening on `127.0.0.1:8080`.
 
 ---
 
@@ -38,6 +39,7 @@ This repository contains my automated solutions and technical write-ups for the 
 | 2   | **SQL Injection** | SQL injection vulnerability allowing login bypass                                   | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-02/lab-02.py) | [📝 Notes](./sql-injection/lab-02/lab-02.md) |
 | 3   | **SQL Injection** | SQL injection UNION attack, determining the number of columns returned by the query | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-03/lab-03.py) | [📝 Notes](./sql-injection/lab-03/lab-03.md) |
 | 4   | **SQL Injection** | SQL injection UNION attack, finding a column containing text                        | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-04/lab-04.py) | [📝 Notes](./sql-injection/lab-04/lab-04.md) |
+| 5   | **SQL Injection** | SQL injection UNION attack, retrieving data from other tables                       | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-05/lab-05.py) | [📝 Notes](./sql-injection/lab-05/lab-05.md) |
 
 ---
 
