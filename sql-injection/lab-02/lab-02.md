@@ -8,13 +8,11 @@ The application's login function is vulnerable to SQL injection. By manipulating
 - **Impact**: Full account takeover of the `administrator` account without a valid password.
 
 ---
-
 ### 🎯 Objectives
 
 - Login to the application as the `administrator` user.
 
 ---
-
 ### 🔬 Discovery & Methodology
 
 The application likely processes login credentials using a query structured like this:
@@ -33,7 +31,6 @@ SELECT * FROM users WHERE username = '[USERNAME]' AND password = '[PASSWORD]'
    The `--` sequence comments out the rest of the query, effectively removing the `AND password = '...'` requirement. The database only evaluates the username, granting access to the `administrator` account.
 
 ---
-
 ### 🛠️ Exploit Implementation
 
 The automation script (`lab-02.py`) handles the stateful nature of the login process:
@@ -42,7 +39,6 @@ The automation script (`lab-02.py`) handles the stateful nature of the login pro
 - **CSRF Extraction**: Uses a regular expression to find and extract the hidden CSRF token from the login form.
 
 ---
-
 ### 🛡️ Remediation
 
 **Primary Fix: Parameterized Queries (Prepared Statements)**

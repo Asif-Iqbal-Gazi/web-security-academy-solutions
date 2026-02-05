@@ -25,18 +25,19 @@ This repository contains my automated solutions and technical write-ups for the 
    python3 sql-injection/lab-05/lab-05.py <lab-url>
    ```
 
-   [!Note] The scripts are currently configured to use `verify=False`. Ensure your local proxy (e.g., Burp Suite) is listening on `127.0.0.1:8080`.
+>[!NOTE] 
+   >The scripts are currently configured to use `verify=False`. Ensure your local proxy (e.g., Burp Suite) is listening on `127.0.0.1:8080`.
 
 ---
 
 ## ✅ Progress Dashboard
 
-| #   | Category          | Lab Name                                                                        | Difficulty   | Solution                                      | Writeup                                      |
-| :-- | :---------------- | :------------------------------------------------------------------------------ | :----------- | --------------------------------------------- | -------------------------------------------- |
-| 1   | **SQL Injection** | SQL injection vulnerability in `WHERE` clause allowing retrieval of hidden data | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-01/lab-01.py) | [📝 Notes](./sql-injection/lab-01/lab-01.md) |
-| 2   | **SQL Injection** | SQL injection vulnerability allowing login bypass                               | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-02/lab-02.py) | [📝 Notes](./sql-injection/lab-02/lab-02.md) |
-|     |                   |                                                                                 |              |                                               |                                              |
-|     |                   |                                                                                 |              |                                               |                                              |
+| #   | Category          | Lab Name                                                                            | Difficulty   | Solution                                      | Writeup                                      |
+| :-- | :---------------- | :---------------------------------------------------------------------------------- | :----------- | --------------------------------------------- | -------------------------------------------- |
+| 1   | **SQL Injection** | SQL injection vulnerability in `WHERE` clause allowing retrieval of hidden data     | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-01/lab-01.py) | [📝 Notes](./sql-injection/lab-01/lab-01.md) |
+| 2   | **SQL Injection** | SQL injection vulnerability allowing login bypass                                   | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-02/lab-02.py) | [📝 Notes](./sql-injection/lab-02/lab-02.md) |
+| 3   | **SQL Injection** | SQL injection UNION attack, determining the number of columns returned by the query | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-03/lab-03.py) | [📝 Notes](./sql-injection/lab-03/lab-03.md) |
+| 4   | **SQL Injection** | SQL injection UNION attack, finding a column containing text                        | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-04/lab-04.py) | [📝 Notes](./sql-injection/lab-04/lab-04.md) |
 
 ---
 

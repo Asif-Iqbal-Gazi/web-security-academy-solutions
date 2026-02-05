@@ -9,13 +9,11 @@ The backend query is designed to show only "released" products, but by manipulat
 - **Impact**: Disclosure of unreleased products and full inventory.
 
 ---
-
 ### 🎯 Objectives
 
 - Perform a SQL injection attack that causes the application to display one or more unreleased products
 
 ---
-
 ### 🔬 Discovery & Methodology
 
 The application executes a query similar to:
@@ -36,7 +34,6 @@ SELECT * FROM products WHERE category = 'Gifts' AND released = 1
    Since `1=1` is always true, the database returns every record in the `products` table, effectively ignoring the category filter and the release restriction.
 
 ---
-
 ### 🛠️ Exploit Implementation
 
 The automation script (`lab-01.py`) performs the following logic:
@@ -45,7 +42,6 @@ The automation script (`lab-01.py`) performs the following logic:
 - Uses `request.get()` to make a `GET` request with user supplied payload for the `category` URL parameter. It then inspects the response body for `"Congratulation"` string, providing feedback on whether the injection was successful.
 
 ---
-
 ### 🛡️ Remediation
 
 **Primary Fix: Parameterized Queries (Prepared Statements)**
