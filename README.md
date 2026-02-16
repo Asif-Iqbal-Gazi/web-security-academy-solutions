@@ -42,6 +42,7 @@ This repository contains my automated solutions and technical write-ups for the 
 | 5   | **SQL Injection** | SQL injection UNION attack, retrieving data from other tables                       | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-05/lab-05.py) | [📝 Notes](./sql-injection/lab-05/lab-05.md) |
 | 6   | **SQL Injection** | SQL injection UNION attack, retrieving multiple values in a single column           | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-06/lab-06.py) | [📝 Notes](./sql-injection/lab-06/lab-06.md) |
 | 7   | **SQL Injection** | SQL injection attack, querying the database type and version on MySQL and Microsoft | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-07/lab-07.py) | [📝 Notes](./sql-injection/lab-07/lab-07.md) |
+| 8   | **SQL Injection** | SQL injection attack, listing the database contents on non-Oracle databases         | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-08/lab-08.py) | [📝 Notes](./sql-injection/lab-08/lab-08.md) |
 
 ---
 
