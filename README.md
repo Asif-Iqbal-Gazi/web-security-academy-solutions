@@ -35,7 +35,7 @@ This repository contains my automated solutions and technical write-ups for the 
 
 | #   | Category          | Lab Name                                                                            | Difficulty   | Solution                                      | Writeup                                      |
 | :-- | :---------------- | :---------------------------------------------------------------------------------- | :----------- | --------------------------------------------- | -------------------------------------------- |
-| 1   | **SQL Injection** | SQL injection vulnerability in `WHERE` clause allowing retrieval of hidden data     | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-01/lab-01.py) | [📝 Notes](./sql-injection/lab-01/lab-01.md) |
+| 1   | **SQL Injection** | SQL injection vulnerability in `WHERE` clause allowing retrieval of hidden data     | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-01/lab-01.py) | [📝 Notes](./sql-injection/lab-01/README.md) |
 | 2   | **SQL Injection** | SQL injection vulnerability allowing login bypass                                   | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-02/lab-02.py) | [📝 Notes](./sql-injection/lab-02/lab-02.md) |
 | 3   | **SQL Injection** | SQL injection UNION attack, determining the number of columns returned by the query | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-03/lab-03.py) | [📝 Notes](./sql-injection/lab-03/lab-03.md) |
 | 4   | **SQL Injection** | SQL injection UNION attack, finding a column containing text                        | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-04/lab-04.py) | [📝 Notes](./sql-injection/lab-04/lab-04.md) |
@@ -53,7 +53,7 @@ This repository contains my automated solutions and technical write-ups for the 
 ├── sql-injection/          # Category-specific folders
 │   └── lab-XX/
 │       ├── lab-XX.py       # Automated exploit script
-│       └── lab-XX.md       # Technical write-ups
+│       └── README.md       # Technical write-ups
 ├── requirements.txt        # Project dependencies
 └── README.md               # Portfolio dashboard
 ```
