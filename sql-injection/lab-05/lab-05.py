@@ -9,14 +9,6 @@ from bs4 import BeautifulSoup
 from requests import Response
 from requests.exceptions import RequestException
 
-# Configurations
-FILTER_ENDPOINT = "filter"
-LOGIN_ENDPOINT = "login"
-REQUEST_TIMEOUT = (2, 5)
-MAX_COL_TO_TEST = 10
-BURP_PROXIES = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
-
-
 warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 
 

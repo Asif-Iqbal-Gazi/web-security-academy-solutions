@@ -11,10 +11,6 @@ from bs4 import BeautifulSoup
 # Suppress insecure request warnings
 warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 
-FILTER_ENDPOINT = "filter"
-REQUEST_TIMEOUT = (2, 5)
-BURP_PROXIES = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
-
 
 class LabExploit:
     def __init__(self, base_url: str) -> None:
