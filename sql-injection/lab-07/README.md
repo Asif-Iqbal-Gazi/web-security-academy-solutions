@@ -2,7 +2,7 @@
 
 ### 📋 Summary
 
-This product category is vulnerable to `UNION-based` SQL injection. The goal is to exfiltrate the database version string to fingerprint the backend engine.
+This product category is vulnerable to `UNION-based` SQL injection. The goal is to exfiltrate the database version string to fingerprint the back-end engine.
 
 - **Vulnerability Type**: SQL Injection (`UNION-based`)
 - **Impact**: Database fingerprinting and information disclosure
@@ -37,7 +37,7 @@ This product category is vulnerable to `UNION-based` SQL injection. The goal is 
 ' UNION SELECT @@version, NULL --+
 ```
 
----
+(_Note: MySQL requires a space after `--` or the use of `#` as a comment character.)
 
 ### 🛠️ Exploit Implementation
 

