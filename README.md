@@ -33,16 +33,16 @@ This repository contains my automated solutions and technical write-ups for the 
 
 ## ✅ Progress Dashboard
 
-| #   | Category          | Lab Name                                                                            | Difficulty   | Solution                                      | Writeup                                      |
-| :-- | :---------------- | :---------------------------------------------------------------------------------- | :----------- | --------------------------------------------- | -------------------------------------------- |
-| 1   | **SQL Injection** | SQL injection vulnerability in `WHERE` clause allowing retrieval of hidden data     | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-01/lab-01.py) | [📝 Notes](./sql-injection/lab-01/README.md) |
-| 2   | **SQL Injection** | SQL injection vulnerability allowing login bypass                                   | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-02/lab-02.py) | [📝 Notes](./sql-injection/lab-02/README.md) |
-| 3   | **SQL Injection** | SQL injection UNION attack, determining the number of columns returned by the query | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-03/lab-03.py) | [📝 Notes](./sql-injection/lab-03/lREADMEmd) |
-| 4   | **SQL Injection** | SQL injection UNION attack, finding a column containing text                        | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-04/lab-04.py) | [📝 Notes](./sql-injection/lab-04/lab-04.md) |
-| 5   | **SQL Injection** | SQL injection UNION attack, retrieving data from other tables                       | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-05/lab-05.py) | [📝 Notes](./sql-injection/lab-05/lab-05.md) |
-| 6   | **SQL Injection** | SQL injection UNION attack, retrieving multiple values in a single column           | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-06/lab-06.py) | [📝 Notes](./sql-injection/lab-06/lab-06.md) |
-| 7   | **SQL Injection** | SQL injection attack, querying the database type and version on MySQL and Microsoft | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-07/lab-07.py) | [📝 Notes](./sql-injection/lab-07/lab-07.md) |
-| 8   | **SQL Injection** | SQL injection attack, listing the database contents on non-Oracle databases         | _APPRENTICE_ | [🐍 Python](./sql-injection/lab-08/lab-08.py) | [📝 Notes](./sql-injection/lab-08/lab-08.md) |
+| #   | Category          | Lab Name                                                                            | Difficulty     | Solution                                      | Writeup                                      |
+| :-- | :---------------- | :---------------------------------------------------------------------------------- | :------------- | --------------------------------------------- | -------------------------------------------- |
+| 1   | **SQL Injection** | SQL injection vulnerability in `WHERE` clause allowing retrieval of hidden data     | _APPRENTICE_   | [🐍 Python](./sql-injection/lab-01/lab-01.py) | [📝 Notes](./sql-injection/lab-01/README.md) |
+| 2   | **SQL Injection** | SQL injection vulnerability allowing login bypass                                   | _APPRENTICE_   | [🐍 Python](./sql-injection/lab-02/lab-02.py) | [📝 Notes](./sql-injection/lab-02/README.md) |
+| 3   | **SQL Injection** | SQL injection UNION attack, determining the number of columns returned by the query | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-03/lab-03.py) | [📝 Notes](./sql-injection/lab-03/lREADMEmd) |
+| 4   | **SQL Injection** | SQL injection UNION attack, finding a column containing text                        | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-04/lab-04.py) | [📝 Notes](./sql-injection/lab-04/lab-04.md) |
+| 5   | **SQL Injection** | SQL injection UNION attack, retrieving data from other tables                       | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-05/lab-05.py) | [📝 Notes](./sql-injection/lab-05/README.md) |
+| 6   | **SQL Injection** | SQL injection UNION attack, retrieving multiple values in a single column           | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-06/lab-06.py) | [📝 Notes](./sql-injection/lab-06/README.md) |
+| 7   | **SQL Injection** | SQL injection attack, querying the database type and version on MySQL and Microsoft | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-07/lab-07.py) | [📝 Notes](./sql-injection/lab-07/README.md) |
+| 8   | **SQL Injection** | SQL injection attack, listing the database contents on non-Oracle databases         | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-08/lab-08.py) | [📝 Notes](./sql-injection/lab-08/README.md) |
 
 ---
 

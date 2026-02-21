@@ -45,7 +45,7 @@ This product category is vulnerable to `UNION-based` SQL injection. This lab dem
 ' UNION SELECT username || ':' || password, NULL from users_pprfam--+
 ```
 
----
+(Note: Since the exfiltrated data is reflected in a single column, the application renders the result within `<th>` without corresponding `<td>` elements. The automation script leverages this specific HTML structure to precisely extract credentials.)
 
 ### 🛠️ Exploit Implementation
 
