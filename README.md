@@ -44,6 +44,7 @@ This repository contains my automated solutions and technical write-ups for the 
 | 7   | **SQL Injection** | SQL injection attack, querying the database type and version on MySQL and Microsoft | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-07/lab-07.py) | [📝 Notes](./sql-injection/lab-07/README.md) |
 | 8   | **SQL Injection** | SQL injection attack, listing the database contents on non-Oracle databases         | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-08/lab-08.py) | [📝 Notes](./sql-injection/lab-08/README.md) |
 | 9   | **SQL Injection** | Blind SQL injection with conditional responses                                      | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-09/lab-09.py) | [📝 Notes](./sql-injection/lab-09/README.md) |
+| 10  | **SQL Injection** | Blind SQL injection with conditional errors                                         | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-10/lab-10.py) | [📝 Notes](./sql-injection/lab-10/README.md) |
 
 ---
 
