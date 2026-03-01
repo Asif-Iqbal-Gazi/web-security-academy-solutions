@@ -47,6 +47,8 @@ This repository contains my automated solutions and technical write-ups for the 
 | 10  | **SQL Injection** | Blind SQL injection with conditional errors                                         | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-10/lab-10.py) | [📝 Notes](./sql-injection/lab-10/README.md) |
 | 11  | **SQL Injection** | Visible error-based SQL injection                                                   | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-11/lab-11.py) | [📝 Notes](./sql-injection/lab-11/README.md) |
 | 12  | **SQL Injection** | Blind SQL injection with time delays and information retrieval                      | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-12/lab-12.py) | [📝 Notes](./sql-injection/lab-12/README.md) |
+| 13  | **SQL Injection** | Blind SQL injection with out-of-band interaction                                    | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-13/lab-13.py) | [📝 Notes](./sql-injection/lab-13/README.md) |
+| 14  | **SQL Injection** | Blind SQL injection with out-of-band data exfiltration                              | _PRACTITIONER_ | [🐍 Python](./sql-injection/lab-14/lab-14.py) | [📝 Notes](./sql-injection/lab-14/README.md) |
 
 ---
 
